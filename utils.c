@@ -1,115 +1,86 @@
 #include "main.h"
 
 /**
- * _putchar - putchar
- * @c: c
+ * is_printable - Evaluates if a char is printable
+ * @c: Char to be evaluated.
  *
- * Return: int
+ * Return: 1 if c is printable, 0 otherwise
  */
-int _putchar(char c)
+int is_printable(char c)
 {
-	return (write(1, &c, 1));
-}
-
-/**
- * convert_decimal - converts to given base
- * @num: num to convert
- * @base: base to convert to
- * @flag_uppercasehex: uppercase or lowercase hex values
- * @count: length of string
- * @isPtr: ptr
- *
- * Return: int
- */
-int convert_decimal(unsigned long int num, int base, int flag_uppercasehex,
-					int *count, int isPtr)
-{
-	char upperValues[] = "0123456789ABCDEF";
-	char lowerValues[] = "0123456789abcdef";
-	char buffer[50];
-	int i = 0, j = 0;
-	unsigned int a = (unsigned int)num;
-
-	if (isPtr)
-	{
-		_putchar('0');
-		_putchar('x');
-		*count = *count + 2;
-
-		do {
-			buffer[i] = lowerValues[num % base];
-			num = num / base;
-			i++;
-		} while (num != 0);
-	}
-	else
-	{
-		do {
-			if (flag_uppercasehex == 1)
-				buffer[i] = upperValues[a % base];
-			else
-				buffer[i] = lowerValues[a % base];
-			a = a / base;
-			i++;
-		} while (a != 0);
-	}
-
-	buffer[i] = '\0';
-	for (j = i - 1; j >= 0; j--)
-	{
-		_putchar(buffer[j]);
-		*count = *count + 1;
-	}
+	if (c >= 32 && c < 127)
+		return (1);
 
 	return (0);
 }
 
 /**
- * print_num - prints a number
- * @num: number
- * @count: length
- *
- * Return: int
+ * append_hexa_code - Append ascci in hexadecimal code to buffer
+ * @buffer: Array of chars.
+ * @i: Index at which to start appending.
+ * @ascii_code: ASSCI CODE.
+ * Return: Always 3
  */
-int print_num(long num, int *count)
+int append_hexa_code(char ascii_code, char buffer[], int i)
 {
-	int *ptr;
-	int i = 0, j = 0;
-	long m = 0;
+	char map_to[] = "0123456789ABCDEF";
+	/* The hexa format code is always 2 digits long */
+	if (ascii_code < 0)
+		ascii_code *= -1;
 
-	if (num < 0)
-	{
-		_putchar('-');
-		*count = *count + 1;
-		num = num * -1;
-	}
+	buffer[i++] = '\\';
+	buffer[i++] = 'x';
 
-	m = num;
+	buffer[i++] = map_to[ascii_code / 16];
+	buffer[i] = map_to[ascii_code % 16];
 
-	while (m != 0)
-	{
-		m = m / 10;
-		i++;
-	}
+	return (3);
+}
 
-	m = num;
-	ptr = malloc(sizeof(int) * i);
+/**
+ * is_digit - Verifies if a char is a digit
+ * @c: Char to be evaluated
+ *
+ * Return: 1 if c is a digit, 0 otherwise
+ */
+int is_digit(char c)
+{
+	if (c >= '0' && c <= '9')
+		return (1);
 
-	if (ptr == NULL)
-		return (-1);
-
-	for (j = 0; j < i; j++)
-	{
-		ptr[j] = m % 10;
-		m = m / 10;
-	}
-
-	for (j = i - 1; j >= 0; j--)
-	{
-		_putchar(ptr[j] + '0');
-		*count = *count + 1;
-	}
-
-	free(ptr);
 	return (0);
+}
+
+/**
+ * convert_size_number - Casts a number to the specified size
+ * @num: Number to be casted.
+ * @size: Number indicating the type to be casted.
+ *
+ * Return: Casted value of num
+ */
+long int convert_size_number(long int num, int size)
+{
+	if (size == S_LONG)
+		return (num);
+	else if (size == S_SHORT)
+		return ((short)num);
+
+	return ((int)num);
+}
+
+/**
+ * convert_size_unsgnd - Casts a number to the specified size
+ * @num: Number to be casted
+ * @size: Number indicating the type to be casted
+ *
+ * Return: Casted value of num
+ */
+long int convert_size_unsgnd(unsigned long int num, int size)
+{
+	if (size == S_LONG)
+		return (num);
+	else if (size == S_SHORT)
+		return ((unsigned short)num);
+
+	return ((unsigned int)num);
 }
